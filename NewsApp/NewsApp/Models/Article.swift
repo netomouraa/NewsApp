@@ -31,6 +31,10 @@ struct Article: Identifiable, Codable, Equatable {
         return metadata.components(separatedBy: " — ").first ?? ""
     }
     
+    var hasChapeu: Bool {
+        return chapeu != nil && !chapeu!.isEmpty
+    }
+    
     static func == (lhs: Article, rhs: Article) -> Bool {
         lhs.id == rhs.id
     }
