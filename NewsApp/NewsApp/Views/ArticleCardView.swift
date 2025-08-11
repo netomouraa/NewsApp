@@ -15,10 +15,21 @@ struct ArticleCardView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(article.displaySection)
-                        .font(.caption)
-                        .foregroundColor(.blue)
-                        .fontWeight(.medium)
+                    if article.hasChapeu {
+                        Text(article.displaySection)
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(4)
+                    } else if let section = article.section {
+                        Text(section)
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                            .fontWeight(.medium)
+                    }
                     
                     Text(article.title)
                         .font(.headline)
