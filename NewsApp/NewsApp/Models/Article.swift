@@ -35,3 +35,49 @@ struct Article: Identifiable, Codable, Equatable {
         lhs.id == rhs.id
     }
 }
+
+struct Resource: Codable {
+    let description: String
+    let title: String
+}
+
+struct ContentType: Codable {
+    let api: String
+    let name: String
+}
+
+struct Feed: Codable {
+    let oferta: String
+    let falkor: Falkor
+}
+
+struct Falkor: Codable {
+    let items: [FeedItem]
+}
+
+struct FeedItem: Codable {
+    let id: String
+    let type: String
+    let content: Content?
+    let metadata: String?
+}
+
+struct Content: Codable {
+    let chapeu: Chapeu?
+    let image: NewsImage?
+    let missingFields: Bool?
+    let section: String?
+    let summary: String?
+    let title: String
+    let type: String
+    let url: String
+    let video: String?
+}
+
+struct Chapeu: Codable {
+    let label: String
+}
+
+struct NewsImage: Codable {
+    let url: String
+}
