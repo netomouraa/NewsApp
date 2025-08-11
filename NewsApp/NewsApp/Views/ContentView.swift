@@ -7,15 +7,13 @@
 
 import SwiftUI
 
+// MARK: - Views
 struct ContentView: View {
+    @StateObject private var viewModel = NewsViewModel()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        NewsListView()
+            .environmentObject(viewModel)
     }
 }
 
