@@ -60,6 +60,10 @@ struct Falkor: Codable {
 }
 
 struct FeedItem: Codable {
+    var isValidForDisplay: Bool {
+        return type == "basico" || type == "materia"
+    }
+    
     let id: String
     let type: String
     let content: Content?

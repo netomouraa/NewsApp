@@ -26,8 +26,8 @@ class NewsService: ObservableObject {
         let newsResponse = try JSONDecoder().decode(NewsResponse.self, from: data)
         
         return newsResponse.feed.falkor.items.compactMap { item in
-            guard let content = item.content else { return nil }
-            
+            guard item.isValidForDisplay, let content = item.content else { return nil }
+                        
             return Article(
                 id: item.id,
                 title: content.title,
