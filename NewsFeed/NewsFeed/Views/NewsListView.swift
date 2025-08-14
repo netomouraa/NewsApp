@@ -14,7 +14,9 @@ struct NewsListView: View {
         NavigationView {
             List {
                 ForEach(viewModel.items) { item in
-                    NewsRowView(item: item)
+                    NavigationLink(destination: NewsDetailView(item: item)) {
+                        NewsRowView(item: item)
+                    }
                     .onAppear {
                         if item.id == viewModel.items.last?.id {
                             viewModel.loadMore()
