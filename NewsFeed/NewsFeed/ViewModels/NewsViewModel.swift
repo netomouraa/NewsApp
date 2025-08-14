@@ -15,11 +15,13 @@ class NewsViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     private let service = NewsService.shared
-    
+    private let mockService = MockNewsService.shared
+
     func loadFeed() {
         error = nil
         
-        service.fetchFeed()
+//        service.fetchFeed()
+        mockService.fetchFeed()
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
