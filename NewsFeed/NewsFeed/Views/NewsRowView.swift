@@ -12,6 +12,13 @@ struct NewsRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            if let chapeu = item.content?.chapeu {
+                Text(chapeu.uppercased())
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.blue)
+            }
+
             HStack(alignment: .top, spacing: 12) {
                 AsyncImage(url: URL(string: item.content?.image?.url ?? "")) { image in
                     image
