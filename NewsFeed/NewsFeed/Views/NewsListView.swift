@@ -15,6 +15,19 @@ struct NewsListView: View {
             List {
                 ForEach(viewModel.items) { item in
                     NewsRowView(item: item)
+                    .onAppear {
+                        if item.id == viewModel.items.last?.id {
+                            viewModel.loadMore()
+                        }
+                    }
+                }
+                
+                if viewModel.isLoadingMore {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
                 }
             }
             .navigationTitle("Notícias")

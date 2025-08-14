@@ -23,4 +23,15 @@ class NewsService: ObservableObject {
             .decode(type: NewsResponse.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
+    
+    func fetchPage(ofertaId: String, page: Int) -> AnyPublisher<NewsResponse, Error> {
+        guard let url = URL(string: "\(baseURL)/feed/page/g1/\(ofertaId)/\(page)") else {
+            return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
+        }
+        
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .map(\.data)
+            .decode(type: NewsResponse.self, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
+    }
 }
