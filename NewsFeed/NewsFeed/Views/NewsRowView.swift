@@ -48,6 +48,12 @@ struct NewsRowView: View {
                             .foregroundColor(.secondary)
                             .lineLimit(2)
                     }
+                    
+                    if let metadata = item.metadata {
+                        Text(metadata)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 Spacer()
             }
