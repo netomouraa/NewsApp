@@ -30,7 +30,7 @@ class NewsViewModel: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] response in
-                    self?.items = response.feed.falkor.items
+                    self?.items = response.feed.falkor.items.filter { $0.isValid }
                 }
             )
             .store(in: &cancellables)

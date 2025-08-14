@@ -25,6 +25,10 @@ struct NewsItem: Codable, Identifiable {
     let type: String
     let content: NewsContent?
     let metadata: String?
+    
+    var isValid: Bool {
+        type == "basico" || type == "materia"
+    }
 }
 
 struct NewsContent: Codable {
