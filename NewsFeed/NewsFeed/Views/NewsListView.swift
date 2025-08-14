@@ -18,6 +18,9 @@ struct NewsListView: View {
                 }
             }
             .navigationTitle("Notícias")
+            .refreshable {
+                viewModel.refresh()
+            }
             .onAppear {
                 if viewModel.items.isEmpty {
                     viewModel.loadFeed()

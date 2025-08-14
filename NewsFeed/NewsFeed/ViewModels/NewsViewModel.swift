@@ -35,4 +35,10 @@ class NewsViewModel: ObservableObject {
             )
             .store(in: &cancellables)
     }
+    
+    func refresh() {
+        items.removeAll()
+        loadFeed()
+    }
+    
 }
