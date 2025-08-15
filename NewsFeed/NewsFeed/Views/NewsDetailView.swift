@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import WebKit
 
 struct NewsDetailView: View {
     let item: NewsItem
@@ -19,17 +18,5 @@ struct NewsDetailView: View {
         } else {
             Text("URL não disponível")
         }
-    }
-}
-
-struct WebView: UIViewRepresentable {
-    let url: URL
-    
-    func makeUIView(context: Context) -> WKWebView {
-        WKWebView()
-    }
-    
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        webView.load(URLRequest(url: url))
     }
 }
