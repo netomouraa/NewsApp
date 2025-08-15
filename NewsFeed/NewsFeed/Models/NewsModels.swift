@@ -47,4 +47,13 @@ struct Chapeu: Codable {
 
 struct NewsImage: Codable {
     let url: String?
+    let sizes: NewsImageSizes?
+}
+
+struct NewsImageSizes: Codable {
+    let Q: QSize?
+}
+
+struct QSize: Codable {
+    let url: String?
 }

@@ -20,7 +20,7 @@ struct NewsRowView: View {
             }
 
             HStack(alignment: .top, spacing: 12) {
-                AsyncImage(url: URL(string: item.content?.image?.url ?? "")) { image in
+                AsyncImage(url: URL(string: item.content?.image?.sizes?.Q?.url ?? "")) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
