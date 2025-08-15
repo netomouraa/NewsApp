@@ -12,7 +12,7 @@ struct NewsRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            if let chapeu = item.content?.chapeu {
+            if let chapeu = item.content?.chapeu?.label {
                 Text(chapeu.uppercased())
                     .font(.caption)
                     .fontWeight(.semibold)
