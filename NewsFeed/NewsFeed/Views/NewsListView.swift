@@ -8,7 +8,14 @@
 import SwiftUI
 
 struct NewsListView: View {
-    @StateObject private var viewModel = NewsViewModel()
+    @StateObject private var viewModel: NewsViewModel
+    let feedType: FeedType
+    
+    init(feedType: FeedType) {
+        self.feedType = feedType
+        self._viewModel = StateObject(wrappedValue: NewsViewModel(feedType: feedType))
+//        self._viewModel = StateObject(wrappedValue: NewsViewModel(feedType: feedType, service: MockNewsService.shared))
+    }
     
     var body: some View {
         NavigationView {
@@ -18,9 +25,7 @@ struct NewsListView: View {
                         NewsRowView(item: item)
                     }
                     .onAppear {
-                        if item.id == viewModel.items.last?.id {
-                            viewModel.loadMore()
-                        }
+                        viewModel.loadMoreIfNeeded(currentItem: item)
                     }
                 }
                 
@@ -32,7 +37,7 @@ struct NewsListView: View {
                     }
                 }
             }
-            .navigationTitle("Notícias")
+            .navigationTitle(feedType.title)
             .refreshable {
                 viewModel.refresh()
             }

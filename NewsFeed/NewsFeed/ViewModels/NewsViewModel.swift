@@ -14,19 +14,24 @@ class NewsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var isLoadingMore = false
     @Published var error: String?
+    @Published var hasMorePages = true
     
     private var cancellables = Set<AnyCancellable>()
-    private var ofertaId: String?
+    private let service: NewsServiceProtocol
+    private let feedType: FeedType
+    private var currentOfertaId: String?
     private var currentPage = 1
-    private let service = NewsService.shared
-    private let mockService = MockNewsService.shared
-
+    
+    init(feedType: FeedType, service: NewsServiceProtocol = NewsService.shared) {
+        self.feedType = feedType
+        self.service = service
+    }
+    
     func loadFeed() {
         isLoading = true
         error = nil
         
-//        service.fetchFeed()
-        mockService.fetchFeed()
+        service.fetchFeed(type: feedType)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
@@ -36,7 +41,7 @@ class NewsViewModel: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] response in
-                    self?.ofertaId = response.feed.oferta
+                    self?.currentOfertaId = response.feed.oferta
                     self?.items = response.feed.falkor.items.filter { $0.isValid }
                     self?.currentPage = 1
                 }
@@ -44,24 +49,39 @@ class NewsViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func loadMore() {
-        guard let ofertaId = ofertaId, !isLoadingMore else { return }
+    func loadMoreIfNeeded(currentItem: NewsItem) {
+        let thresholdIndex = items.index(items.endIndex, offsetBy: -3)
+        if let itemIndex = items.firstIndex(where: { $0.id == currentItem.id }),
+           itemIndex >= thresholdIndex {
+            loadMore()
+        }
+    }
+    
+    private func loadMore() {
+        guard let ofertaId = currentOfertaId,
+              hasMorePages,
+              !isLoadingMore else { return }
         
         currentPage += 1
         isLoadingMore = true
         
-        service.fetchPage(ofertaId: ofertaId, page: currentPage)
+        service.fetchPage(type: feedType, ofertaId: ofertaId, page: currentPage)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     self?.isLoadingMore = false
-                    if case .failure = completion {
+                    if case .failure(let error) = completion {
+                        print("Erro ao carregar mais: \(error)")
                         self?.currentPage -= 1
                     }
                 },
                 receiveValue: { [weak self] response in
                     let newItems = response.feed.falkor.items.filter { $0.isValid }
-                    self?.items.append(contentsOf: newItems)
+                    if newItems.isEmpty {
+                        self?.hasMorePages = false
+                    } else {
+                        self?.items.append(contentsOf: newItems)
+                    }
                 }
             )
             .store(in: &cancellables)
@@ -69,6 +89,7 @@ class NewsViewModel: ObservableObject {
     
     func refresh() {
         items.removeAll()
+        hasMorePages = true
         loadFeed()
     }
 }
