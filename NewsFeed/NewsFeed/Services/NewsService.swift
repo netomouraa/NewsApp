@@ -8,27 +8,9 @@
 import Foundation
 import Combine
 
-enum FeedType {
-    case g1
-    case agronegocio
-    
-    var url: String {
-        switch self {
-        case .g1:
-            return "https://native-leon.globo.com/feed/g1"
-        case .agronegocio:
-            return "https://native-leon.globo.com/feed/https://g1.globo.com/economia/agronegocios"
-        }
-    }
-    
-    var pageIdentifier: String {
-        switch self {
-        case .g1:
-            return "g1"
-        case .agronegocio:
-            return "https://g1.globo.com/economia/agronegocios"
-        }
-    }
+enum FeedType: String, CaseIterable {
+    case g1 = "g1"
+    case agronegocio = "https://g1.globo.com/economia/agronegocios"
     
     var title: String {
         switch self {
@@ -50,8 +32,12 @@ class NewsService: NewsServiceProtocol {
     
     private let baseURL = "https://native-leon.globo.com"
     
+    private init() {}
+    
     func fetchFeed(type: FeedType) -> AnyPublisher<NewsResponse, Error> {
-        guard let url = URL(string: type.url) else {
+        let urlString = "\(baseURL)/feed/\(type.rawValue)"
+        
+        guard let url = URL(string: urlString) else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
         
@@ -62,7 +48,9 @@ class NewsService: NewsServiceProtocol {
     }
     
     func fetchPage(type: FeedType, ofertaId: String, page: Int) -> AnyPublisher<NewsResponse, Error> {
-        guard let url = URL(string: "\(baseURL)/feed/page/\(type.pageIdentifier)/\(ofertaId)/\(page)") else {
+        let urlString = "\(baseURL)/feed/page/\(type.rawValue)/\(ofertaId)/\(page)"
+        
+        guard let url = URL(string: urlString) else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
         
