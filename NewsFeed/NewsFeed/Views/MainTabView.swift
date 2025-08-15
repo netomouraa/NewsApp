@@ -21,6 +21,12 @@ struct MainTabView: View {
                     Image(systemName: "leaf")
                     Text("Agronegócio")
                 }
+            
+            MenuView()
+                .tabItem {
+                    Image(systemName: "list.bullet")
+                    Text("Menu")
+                }
         }
     }
 }
