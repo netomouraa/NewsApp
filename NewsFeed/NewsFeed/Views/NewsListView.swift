@@ -14,7 +14,6 @@ struct NewsListView: View {
     init(feedType: FeedType) {
         self.feedType = feedType
         self._viewModel = StateObject(wrappedValue: NewsViewModel(feedType: feedType))
-//        self._viewModel = StateObject(wrappedValue: NewsViewModel(feedType: feedType, service: MockNewsService.shared))
     }
     
     var body: some View {
@@ -45,6 +44,19 @@ struct NewsListView: View {
                 if viewModel.items.isEmpty {
                     viewModel.loadFeed()
                 }
+            }
+            .overlay {
+                if viewModel.isLoading && viewModel.items.isEmpty {
+                    ProgressView("Carregando...")
+                }
+            }
+            .alert("Erro", isPresented: .constant(viewModel.error != nil)) {
+                Button("Tentar novamente") {
+                    viewModel.error = nil
+                    viewModel.refresh()
+                }
+            } message: {
+                Text(viewModel.error ?? "")
             }
         }
     }
