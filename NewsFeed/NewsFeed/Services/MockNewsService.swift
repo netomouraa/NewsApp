@@ -8,55 +8,16 @@
 import Foundation
 import Combine
 
-class MockNewsService {
+class MockNewsService: NewsServiceProtocol {
     static let shared = MockNewsService()
     
     private init() {}
     
-    func fetchFeed() -> AnyPublisher<NewsResponse, Error> {
+    func fetchFeed(type: FeedType) -> AnyPublisher<NewsResponse, Error> {
         let mockResponse = NewsResponse(
             feed: Feed(
-                oferta: "mock-oferta-id",
-                falkor: Falkor(
-                    items: [
-                        NewsItem(
-                            id: "1",
-                            type: "materia",
-                            content: NewsContent(
-                                title: "Dono da Ultrafarma, diretor da Fast Shop e auditor fiscal são presos em SP",
-                                summary: "Operação mira esquema de corrupção que movimentou R$ 1 bilhão em propina.",
-                                url: "https://g1.globo.com/sp/sao-paulo/noticia/2025/08/12/exemplo.ghtml",
-                                chapeu: "OPERAÇÃO POLICIAL",
-                                image: NewsImage(url: "https://picsum.photos/300/200?random=1")
-                            ),
-                            metadata: "Há 1 hora — Em São Paulo"
-                        ),
-                        NewsItem(
-                            id: "2",
-                            type: "materia",
-                            content: NewsContent(
-                                title: "Novo programa social vai beneficiar milhões de brasileiros",
-                                summary: "Governo anuncia investimento de R$ 5 bilhões em programa de auxílio habitacional.",
-                                url: "https://g1.globo.com/politica/noticia/2025/08/12/exemplo2.ghtml",
-                                chapeu: "POLÍTICA",
-                                image: NewsImage(url: "https://picsum.photos/300/200?random=2")
-                            ),
-                            metadata: "Há 2 horas — Em Brasília"
-                        ),
-                        NewsItem(
-                            id: "3",
-                            type: "basico",
-                            content: NewsContent(
-                                title: "Previsão do tempo para o fim de semana",
-                                summary: "Chuva intensa deve atingir região Sul do país nos próximos dias.",
-                                url: "https://g1.globo.com/clima/noticia/2025/08/12/exemplo3.ghtml",
-                                chapeu: nil,
-                                image: NewsImage(url: "https://picsum.photos/300/200?random=3")
-                            ),
-                            metadata: "Há 3 horas"
-                        )
-                    ]
-                )
+                oferta: "mock-oferta-\(type.title.lowercased())",
+                falkor: Falkor(items: getMockItems(for: type))
             )
         )
         
@@ -64,5 +25,78 @@ class MockNewsService {
             .delay(for: .seconds(1), scheduler: DispatchQueue.main)
             .setFailureType(to: Error.self)
             .eraseToAnyPublisher()
+    }
+    
+    func fetchPage(type: FeedType, ofertaId: String, page: Int) -> AnyPublisher<NewsResponse, Error> {
+        let mockResponse = NewsResponse(
+            feed: Feed(
+                oferta: ofertaId,
+                falkor: Falkor(items: getMockItems(for: type, page: page))
+            )
+        )
+        
+        return Just(mockResponse)
+            .delay(for: .seconds(1), scheduler: DispatchQueue.main)
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
+    
+    private func getMockItems(for type: FeedType, page: Int = 1) -> [NewsItem] {
+        switch type {
+        case .g1:
+            return [
+                NewsItem(
+                    id: "g1-\(page)-1",
+                    type: "materia",
+                    content: NewsContent(
+                        title: "Dono da Ultrafarma é preso em operação da PF",
+                        summary: "Operação mira esquema de corrupção que movimentou R$ 1 bilhão.",
+                        url: "https://g1.globo.com/exemplo",
+                        chapeu: "OPERAÇÃO POLICIAL",
+                        image: NewsImage(url: "https://picsum.photos/300/200?random=\(page)1")
+                    ),
+                    metadata: "Há \(page) hora — Em São Paulo"
+                ),
+                NewsItem(
+                    id: "g1-\(page)-2",
+                    type: "materia",
+                    content: NewsContent(
+                        title: "Brasil vence mais uma no Mundial",
+                        summary: "Seleção garantiu vaga nas semifinais com gol nos acréscimos.",
+                        url: "https://g1.globo.com/exemplo2",
+                        chapeu: "ESPORTE",
+                        image: NewsImage(url: "https://picsum.photos/300/200?random=\(page)2")
+                    ),
+                    metadata: "Há \(page + 1) horas"
+                )
+            ]
+        case .agronegocio:
+            return [
+                NewsItem(
+                    id: "agro-\(page)-1",
+                    type: "materia",
+                    content: NewsContent(
+                        title: "Safra de soja bate recorde no Brasil",
+                        summary: "Produção alcança 154 milhões de toneladas na temporada 2024/25.",
+                        url: "https://g1.globo.com/agro/exemplo",
+                        chapeu: "SAFRA 2024/25",
+                        image: NewsImage(url: "https://picsum.photos/300/200?random=\(page)10")
+                    ),
+                    metadata: "Há \(page) hora — No campo"
+                ),
+                NewsItem(
+                    id: "agro-\(page)-2",
+                    type: "basico",
+                    content: NewsContent(
+                        title: "Preço do boi gordo sobe 5% na semana",
+                        summary: "Alta é reflexo da maior demanda por carne no mercado interno.",
+                        url: "https://g1.globo.com/agro/exemplo2",
+                        chapeu: nil,
+                        image: NewsImage(url: "https://picsum.photos/300/200?random=\(page)11")
+                    ),
+                    metadata: "Há \(page + 2) horas — Mercado"
+                )
+            ]
+        }
     }
 }
